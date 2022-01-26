@@ -1,7 +1,3 @@
-/* cidadeDorme
- * Author: aluno
- * Creation date: 25/01/2022
- */
 MACHINE
     cidadeDorme
 
