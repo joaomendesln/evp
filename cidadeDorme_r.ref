@@ -1,0 +1,175 @@
+/* cidadeDorme_r
+ * Author: aluno
+ * Creation date: 25/01/2022
+ */
+
+REFINEMENT cidadeDorme_r
+REFINES cidadeDorme
+
+VARIABLES
+    vivo, jogando, qtd_vivos_r, status_j_r
+/*    qtd_votos_r, papel_r, status_p_r, votos_recebidos_r, ja_votou_r, qtd_atribuidos_r, participante_atacado_r, participante_mais_votado_r, curandeiro_idx_r, lobisomem_idx_r, detetive_idx_r, atacado_idx_r, ataque_bem_sucedido_r */
+
+INVARIANT
+    vivo : 0..9 --> BOOL 
+    & ! xx . ((xx : Participantes & status_p(xx) = vivo) => vivo(xx) = TRUE)
+    & jogando : 0..9 --> BOOL //fazer invariante de ligação
+    & qtd_vivos_r : NATURAL & qtd_vivos_r <= 10
+    & status_j_r : Status_jogo // implementar Status_jogo por enums?
+    /*
+    qtd_votos_r : NATURAL
+    & papel_r : 0..9 >-> Papeis // implementar Papeis por enums? reavaliar
+    & status_p_r : 0..9 >-> Status_participante // Status_participante Papeis por enums? reavaliar: add outro array para dizer quem tá no jogo e quem não tá
+    & votos_recebidos_r : 0..9 >-> NATURAL
+    & ja_votou_r : 0..9 >-> BOOL & dom(ja_votou_r) = card(Participantes)
+    & qtd_atribuidos_r : NATURAL
+    & participante_atacado_r : NATURAL & participante_atacado_r <= 9
+    & participante_mais_votado_r : 0..9
+    & curandeiro_idx_r : 0..9
+    & lobisomem_idx_r : 0..9 
+    & detetive_idx_r : 0..9
+    & atacado_idx_r : 0..9
+    & ataque_bem_sucedido_r : 0..9
+    */
+
+INITIALISATION
+    vivo := % nn . (nn: 0..9 | FALSE) ||
+    jogando := % nn . (nn: 0..9 | FALSE) ||
+    qtd_vivos_r := 0 ||
+    status_j_r := aguardando
+    /*
+    qtd_votos_r, qtd_atribuidos_r := 0, 0, 0 ||
+    status_j_r := aguardando ||
+    papel_r := % nn . (nn : 0..9 | nenhum) ||
+    status_p_r := % nn . (nn : 0..9 | fora) ||
+    votos_recebidos_r := % nn . (nn : 0..9 | 0) ||
+    ja_votou_r := % nn . (nn : 0..9 | FALSE) ||
+    participante_atacado_r := 0 ||
+    participante_mais_votado_r := 0 ||
+    ataque_bem_sucedido_r := FALSE
+    */
+
+OPERATIONS
+
+cadastrar (nn) =
+    BEGIN
+    vivo(nn) := TRUE ||
+    jogando(nn) := TRUE ||
+    IF qtd_vivos_r = 6
+        THEN status_j_r := cadastro
+    END;
+END;
+
+//terminar_cadastro = status_j_r := distribuicao_papeis;
+/*
+//distribuir_papeis = ?
+
+atacar (pp) =
+    BEGIN
+    atacado_idx_r := pp ||
+    participante_atacado_r := pp ||
+    IF (status_p_r(curandeiro_idx_r) = vivo)
+            THEN status_j_r := cura
+    ELSE status_j_r := relatorio_noite
+    END
+    END;
+
+ curar (pp) =
+    BEGIN
+    IF pp /= atacado_idx_r
+        THEN ataque_bem_sucedido_r := TRUE
+    END ||
+    status_j_r := relatorio_noite
+    END;
+
+resp <-- relatar_noite =
+    BEGIN 
+    IF ataque_bem_sucedido_r = TRUE
+    THEN
+        qtd_vivos_r := qtd_vivos_r - 1 ||
+        status_p_r(atacado_idx_r) := morto ||
+        resp := sim ||
+        ataque_bem_sucedido_r := FALSE
+    ELSE
+        resp := nao
+    END ||
+    IF (papel_r(detetive_idx_r) = vivo)
+    THEN status_j_r := investigacao
+    ELSE status_j_r := votacao
+    END
+END;
+
+resp <-- investigar(pp) =
+    BEGIN
+        IF pp = curandeiro_idx_r or pp = lobisomem_idx_r // tem que conferir se estão vivos?
+        THEN resp := sim
+        ELSE resp := nao
+        END ||
+        status_j_r := votacao
+    END;
+
+votar(pp , qq) =
+    BEGIN
+    ja_votou_r(pp) := TRUE ||
+    votos_recebidos_r(qq) :=votos_recebidos_r(qq) + 1 ||
+    qtd_votos_r := qtd_votos_r + 1 ||
+        
+    IF qtd_votos_r = 0
+    THEN
+        participante_mais_votado_r := qq
+    ELSE
+        IF votos_recebidos_r(qq) = votos_recebidos_r(participante_mais_votado_r)
+        THEN participante_mais_votado_r := qq
+        END
+    END ||
+        
+    IF qtd_votos_r = qtd_vivos_r - 1
+    THEN
+        status_j_r := apuracao_votos
+    END
+END;
+
+resp <-- apurar_votos =
+    BEGIN
+    IF (votos_recebidos_r(participante_mais_votado_r) >= ((qtd_vivos_r / 2) + 1 )) // checar se alguém teve votos o suficiente para ser assassinado
+        THEN
+            qtd_vivos_r := qtd_vivos_r - 1 ||
+            status_p_r(participante_mais_votado_r) := morto ||
+            IF participante_mais_votado_r = lobisomem_idx_r
+            THEN
+                resp := morreu_lobisomem ||
+                status_j_r := reinicio
+            ELSE
+                IF qtd_vivos_r <= 4
+                THEN
+                    status_j_r := reinicio ||
+                    resp := lobisomem_venceu
+                ELSE
+                    status_j_r := ataque ||
+                    resp := morreu_nao_lobisomem
+                END
+            END
+        ELSE
+			IF qtd_vivos_r <= 3
+			THEN	
+				status_j_r := reinicio ||
+				resp := lobisomem_venceu
+			ELSE	
+				status_j_r := ataque ||
+				resp := ninguem_morreu
+			END
+		END ||
+		qtd_votos_r := 0 ||
+		votos_recebidos_r := % nn . (nn : 0..9 | 0) ||
+      ja_votou_r := % nn . (nn : 0..9 | FALSE)    
+	END;
+
+// setar configurações para reiniciar jogo
+reiniciar =
+   BEGIN
+		status_j_r := aguardando || 
+		papel_r := % nn . (nn : 0..9 | nenhum) ||
+     status_p_r := % nn . (nn : 0..9 | fora) ||
+		qtd_vivos_r := 0
+	END*/
+END
