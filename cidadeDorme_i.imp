@@ -1,0 +1,272 @@
+/* cidadeDorme_i
+ * Author: aluno
+ * Creation date: 28/01/2022
+ */
+
+IMPLEMENTATION cidadeDorme_i
+REFINES cidadeDorme
+
+CONCRETE VARIABLES
+	qtd_votos, 
+	status_j, 
+	papel, 
+	status_p, 
+	votos_recebidos, 
+	ja_votou, 
+	qtd_vivos, 
+	qtd_atribuidos, 
+	participante_atacado, 
+	participante_mais_votado
+
+INVARIANT
+	qtd_votos : NATURAL
+	& qtd_vivos : NATURAL 
+	& status_j : Status_jogo
+	& papel : Participantes --> Papeis
+	& status_p : Participantes --> Status_participante
+	& votos_recebidos : Participantes --> NATURAL
+	& ja_votou : Participantes --> BOOL
+	& qtd_atribuidos : NATURAL
+	& participante_atacado : Participantes
+	& participante_mais_votado : Participantes 
+
+INITIALISATION
+ 	qtd_votos, qtd_vivos, qtd_atribuidos := 0, 0, 0;
+    status_j := aguardando;
+	papel := Participantes*{nenhum};
+	status_p := Participantes * {fora};
+	votos_recebidos := Participantes * {0};
+	ja_votou := Participantes * {FALSE};
+	participante_atacado := p1;
+	participante_mais_votado := p1
+
+
+OPERATIONS
+cadastrar (nn) =
+    BEGIN
+		status_p := status_p <+  {nn |-> vivo};
+		qtd_vivos := qtd_vivos + 1;
+		IF qtd_vivos = 6
+        		THEN status_j := cadastro
+		END
+	END;
+
+
+terminar_cadastro =
+BEGIN
+		status_j := distribuicao_papeis
+	END;
+
+
+//Definição dos papéis dos participantes
+distribuir_papeis =
+BEGIN
+	IF qtd_atribuidos = 0 THEN
+		qtd_atribuidos := qtd_atribuidos + 1; 
+		IF status_p(p1) = vivo THEN
+			papel(p1) := lobisomem
+		ELSE
+			IF status_p(p2) = vivo THEN
+				papel(p2) := lobisomem
+			ELSE
+				IF status_p(p3) = vivo THEN
+					papel(p3) := lobisomem
+				ELSE
+					papel(p4) := lobisomem
+				END 
+			END 
+		END 
+	END;
+	IF qtd_atribuidos = 1 THEN 
+		qtd_atribuidos := qtd_atribuidos + 1; 
+		IF status_p(p2) = vivo THEN
+			papel(p2) := detetive
+		ELSE
+			IF status_p(p3) = vivo THEN
+				papel(p3) := detetive
+			ELSE
+				IF status_p(p4) = vivo THEN
+					papel(p4) := detetive
+				ELSE
+					papel(p5) := detetive
+				END 
+			END 
+		END
+	END; 
+	IF qtd_atribuidos = 2 THEN
+		qtd_atribuidos := qtd_atribuidos + 1; 
+		IF status_p(p3) = vivo THEN
+			papel(p3) := curandeiro
+		ELSE
+			IF status_p(p4) = vivo THEN
+				papel(p4) := curandeiro
+			ELSE
+				IF status_p(p5) = vivo THEN
+					papel(p5) := curandeiro
+				ELSE
+					papel(p6) := curandeiro
+				END 
+			END 
+		END 
+	END;
+	IF qtd_atribuidos = 3 THEN
+		status_j := ataque
+	END
+END;
+
+//Tentativa de ataque pelo lobisomem
+atacar (pp) =
+BEGIN
+	status_p := status_p <+  {pp |-> atacado};
+	participante_atacado := pp;
+	IF (#xx.(xx: Participantes & papel(xx) = curandeiro & status_p(xx) = vivo))
+	THEN status_j := cura
+	ELSE status_j := relatorio_noite
+	END
+END;
+
+//Tentativa de cura pelo curandeiro
+curar (pp) =
+BEGIN
+	IF  status_p(pp) = atacado
+		THEN status_p := status_p <+ {pp |-> vivo}
+	END;
+	status_j := relatorio_noite
+END;
+
+resp, mm <-- relatar_noite =
+BEGIN
+		IF #(xx) .(xx: Participantes & status_p(xx) = atacado)
+		THEN
+			qtd_vivos := qtd_vivos - 1;
+			IF status_p(p1) = atacado THEN
+				mm := p1
+			END;
+			IF status_p(p2) = atacado THEN
+				mm := p2
+			END;
+			IF status_p(p3) = atacado THEN
+				mm := p3
+			END;
+			IF status_p(p4) = atacado THEN
+				mm := p4
+			END;
+			IF status_p(p5) = atacado THEN
+				mm := p5
+			END;
+			IF status_p(p6) = atacado THEN
+				mm := p6
+			END;
+			IF status_p(p7) = atacado THEN
+				mm := p7
+			END;
+			IF status_p(p8) = atacado THEN
+				mm := p8
+			END;
+			IF status_p(p9) = atacado THEN
+				mm := p9
+			END;
+			IF status_p(p10) = atacado THEN
+				mm := p10
+			END;
+			status_p := status_p <+ {participante_atacado |-> morto};
+			resp := sim;
+		ELSE
+			resp := nao
+		END;
+		IF (#xx.(xx: Participantes & papel(xx) = detetive & status_p(xx) = vivo))
+		THEN status_j := investigacao
+		ELSE status_j := votacao
+		END
+	END;
+
+resp <-- 
+investigar(pp) =
+BEGIN
+		IF papel(pp) = comum
+		THEN resp := sim
+		ELSE resp := nao
+		END;
+		status_j := votacao
+	END;
+
+
+votar_nulo(pp) =
+BEGIN
+		ja_votou := ja_votou <+ {pp |-> TRUE};
+		qtd_votos := qtd_votos + 1;
+		IF qtd_votos = qtd_vivos - 1
+		THEN
+			status_j := apuracao_votos
+		END
+	END;
+
+
+votar(pp , qq) =
+BEGIN
+		ja_votou := ja_votou <+ {pp |-> TRUE};
+		votos_recebidos := votos_recebidos <+ {qq |-> votos_recebidos(qq) + 1};
+		qtd_votos := qtd_votos + 1;
+		
+		IF qtd_votos = 0
+		THEN
+			participante_mais_votado := qq		
+		ELSE
+			IF votos_recebidos(qq) = votos_recebidos(participante_mais_votado)
+			THEN participante_mais_votado := qq
+			END
+		END;
+		
+		IF qtd_votos = qtd_vivos - 1
+		THEN
+			status_j := apuracao_votos
+		END
+	END;
+
+
+resp <-- apurar_votos =
+	BEGIN
+		IF  (#xx.(xx: Participantes & votos_recebidos(xx) >= ((qtd_vivos / 2) + 1 ))) // checar se alguém teve votos o suficiente para ser assassinado
+		THEN
+			qtd_vivos := qtd_vivos - 1;
+			status_p := status_p <+ {participante_mais_votado |-> morto};
+			IF papel(participante_mais_votado) = lobisomem
+			THEN
+				resp := morreu_lobisomem;
+				status_j := reinicio
+			ELSE
+				IF qtd_vivos <= 4
+				THEN
+					status_j := reinicio;
+					resp := lobisomem_venceu	
+				ELSE
+					status_j := ataque;
+					resp := morreu_nao_lobisomem	
+				END
+			END
+		ELSE
+			IF qtd_vivos <= 3
+			THEN	
+				status_j := reinicio;
+				resp := lobisomem_venceu
+			ELSE	
+				status_j := ataque;
+				resp := ninguem_morreu
+			END
+		END;
+		qtd_votos := 0;
+		ja_votou := Participantes * {FALSE};
+		votos_recebidos := Participantes * {0}
+	END;
+
+
+// setar configurações para reiniciar jogo
+reiniciar =
+	BEGIN
+		status_j := aguardando;
+		papel := Participantes*{nenhum};
+		status_p := Participantes * {fora};
+		qtd_vivos := 0
+	END
+
+ END
