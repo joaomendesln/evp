@@ -27,14 +27,13 @@ INVARIANT
 	& participante_mais_votado : Participantes
 
 	// Que estados não podem acontecer
-   & (qtd_vivos <= card(dom(status_p |> ({vivo} \/ {atacado}))))
+    & (qtd_vivos <= card(dom(status_p |> ({vivo} \/ {atacado}))))
 	& qtd_votos <= card(dom(status_p |> ({vivo} \/ {atacado})))
 	& ! xx . (xx : Participantes => votos_recebidos(xx)<= qtd_vivos)
 	
 
 	// Que estados devem acontecer
-	& ((qtd_vivos <= 3  & status_p[dom((papel |> {lobisomem}))] <: {vivo}) => status_j = reinicio)
-	& (status_p[dom(papel |> {lobisomem})] <: {morto} => status_j = reinicio)
+	& (((qtd_vivos <= 3 & status_p[dom(papel |> {lobisomem})] = {vivo}) or (status_p[dom(papel |> {lobisomem})] = {morto})) => status_j = reinicio)
 
 INITIALISATION
  	qtd_votos, qtd_vivos, qtd_atribuidos := 0, 0, 0 ||
