@@ -90,7 +90,7 @@ void cidadeDorme__distribuir_papeis(void)
     ;
 }
 
-void cidadeDorme__atacar(cidadeDorme__Participantes pp)
+void cidadeDorme__atacar(cidadeDorme__Participantes pp, cidadeDorme__Status_participante *ss)
 {
     cidadeDorme__status_p[pp] = cidadeDorme__atacado;
     {
@@ -106,6 +106,7 @@ void cidadeDorme__atacar(cidadeDorme__Participantes pp)
             cidadeDorme__status_j = cidadeDorme__relatorio_noite;
         }
     }
+    (*ss) = cidadeDorme__status_p[pp];
 }
 
 void cidadeDorme__curar(cidadeDorme__Participantes pp)
