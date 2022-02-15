@@ -88,7 +88,7 @@ extern void cidadeDorme__INITIALISATION(void);
 extern void cidadeDorme__cadastrar(cidadeDorme__Participantes nn);
 extern void cidadeDorme__terminar_cadastro(void);
 extern void cidadeDorme__distribuir_papeis(void);
-extern void cidadeDorme__atacar(cidadeDorme__Participantes pp);
+extern void cidadeDorme__atacar(cidadeDorme__Participantes pp, cidadeDorme__Status_participante *ss);
 extern void cidadeDorme__curar(cidadeDorme__Participantes pp);
 extern void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Participantes *mm);
 extern void cidadeDorme__investigar(cidadeDorme__Participantes pp, cidadeDorme__Relatorio *resp);
