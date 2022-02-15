@@ -97,7 +97,7 @@ distribuir_papeis =
 	END;
 
 //Tentativa de ataque pelo lobisomem
-atacar (pp) =
+ss <-- atacar (pp) =
 	PRE pp : Participantes & status_j = ataque & papel(pp) /= lobisomem & status_p(pp) = vivo 
 	THEN
 		status_p := status_p <+  {pp |-> atacado} ||
@@ -105,7 +105,8 @@ atacar (pp) =
 		IF (#xx.(xx: Participantes & papel(xx) = curandeiro & status_p(xx) = vivo))
 		THEN status_j := cura
 		ELSE status_j := relatorio_noite
-		END
+		END ||
+		ss := status_p(pp)
 	END;
 
 //Tentativa de cura pelo curandeiro
