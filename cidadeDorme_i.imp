@@ -7,282 +7,283 @@ IMPLEMENTATION cidadeDorme_i
 REFINES cidadeDorme
 
 CONCRETE_VARIABLES
-	qtd_vivos_i,
-	status_j, 
-	status_p,  
-	papel,
-	lobisomem_p,
-	detetive_p,
-	curandeiro_p,
-	ja_votou,
-	qtd_votos_i,
-	votos_recebidos_i,
-	participante_mais_votado
+    qtd_vivos_i,
+    status_j, 
+    status_p,  
+    papel,
+    lobisomem_p,
+    detetive_p,
+    curandeiro_p,
+    ja_votou,
+    qtd_votos_i,
+    votos_recebidos_i,
+    participante_mais_votado
 
 INVARIANT
-	qtd_vivos_i : 0..10
-	& qtd_vivos_i = qtd_vivos
-	& status_j : Status_jogo
-	& status_p : Participantes --> Status_participante
-	& papel : Participantes --> Papeis
-	& lobisomem_p : Participantes
-	& detetive_p : Participantes
-	& curandeiro_p : Participantes
-	& ja_votou : Participantes --> BOOL
-	& qtd_votos_i : 0..10
-	& qtd_votos_i = qtd_votos
-	& votos_recebidos_i : Participantes --> 0..10
-	& votos_recebidos_i = votos_recebidos
-	& participante_mais_votado : Participantes
+    qtd_vivos_i : 0..10
+    & qtd_vivos_i = qtd_vivos
+    & status_j : Status_jogo
+    & status_p : Participantes --> Status_participante
+    & papel : Participantes --> Papeis
+    & lobisomem_p : Participantes
+    & detetive_p : Participantes
+    & curandeiro_p : Participantes
+    & ja_votou : Participantes --> BOOL
+    & qtd_votos_i : 0..10
+    & qtd_votos_i = qtd_votos
+    & votos_recebidos_i : Participantes --> 0..10
+    & votos_recebidos_i = votos_recebidos
+    & participante_mais_votado : Participantes
 
 INITIALISATION
- 	qtd_vivos_i := 0;
+    qtd_vivos_i := 0;
     status_j := aguardando;
-	status_p := Participantes * {fora};
-	papel := Participantes * {nenhum};
-	lobisomem_p := p1;
-	detetive_p := p1;
-	curandeiro_p := p1;
-	ja_votou := Participantes * {FALSE};
-	qtd_votos_i := 0;
-	votos_recebidos_i := Participantes * {0};
-	participante_mais_votado := p1
+    status_p := Participantes * {fora};
+    papel := Participantes * {nenhum};
+    lobisomem_p := p1;
+    detetive_p := p1;
+    curandeiro_p := p1;
+    ja_votou := Participantes * {FALSE};
+    qtd_votos_i := 0;
+    votos_recebidos_i := Participantes * {0};
+    participante_mais_votado := p1
 
 OPERATIONS
 cadastrar (nn) =
-	BEGIN
-		status_p(nn) := vivo;
-		IF qtd_vivos_i = 0 THEN
-			papel(nn) := lobisomem;
-			lobisomem_p := nn
-		END;
-		IF qtd_vivos_i = 1 THEN
-			papel(nn) := detetive;
-			detetive_p := nn
-		END;
-		IF qtd_vivos_i = 2 THEN
-			papel(nn) := curandeiro;
-			curandeiro_p := nn
-		END;
-		IF qtd_vivos_i > 2 THEN
-			papel(nn) := comum
-		END;
-		qtd_vivos_i := qtd_vivos_i + 1;
-		IF qtd_vivos_i = 6
-	    	THEN status_j := cadastro
-		END
-	END;
+    BEGIN
+        status_p(nn) := vivo;
+        IF qtd_vivos_i = 0 THEN
+            papel(nn) := lobisomem;
+            lobisomem_p := nn
+        END;
+        IF qtd_vivos_i = 1 THEN
+            papel(nn) := detetive;
+            detetive_p := nn
+        END;
+        IF qtd_vivos_i = 2 THEN
+            papel(nn) := curandeiro;
+            curandeiro_p := nn
+        END;
+        IF qtd_vivos_i > 2 THEN
+            papel(nn) := comum
+        END;
+        qtd_vivos_i := qtd_vivos_i + 1;
+        IF qtd_vivos_i = 6
+            THEN status_j := cadastro
+        END
+    END;
 
 
 terminar_cadastro =
-	BEGIN
-		status_j := distribuicao_papeis
-	END;
+    BEGIN
+        status_j := distribuicao_papeis
+    END;
 
 
 //Definição dos papéis dos participantes
 distribuir_papeis =
-	BEGIN
-		skip
-	END;
+    BEGIN
+        skip
+    END;
 
 
 //Tentativa de ataque pelo lobisomem
-atacar (pp) =
-	BEGIN
-		status_p(pp) := atacado;
-	    VAR cc IN
-	        cc := status_p(curandeiro_p);
-	        IF cc = vivo THEN
-	            status_j := cura
-	        ELSE
-	            status_j := relatorio_noite
-	        END
-	    END
-	END;
+ss <-- atacar (pp) =
+    BEGIN
+        status_p(pp) := atacado;
+        VAR cc IN
+            cc := status_p(curandeiro_p);
+            IF cc = vivo THEN
+                status_j := cura
+            ELSE
+                status_j := relatorio_noite
+            END
+        END;
+        ss := status_p(pp)
+    END;
 
 
 //Tentativa de cura pelo curandeiro
 curar (pp) =
-	BEGIN
-		VAR cc IN
-			cc := status_p(pp);
-			IF cc = atacado THEN 
-				status_p(pp) := vivo
-			END
-		END;
-		status_j := relatorio_noite
-	END;
+    BEGIN
+        VAR cc IN
+            cc := status_p(pp);
+            IF cc = atacado THEN 
+                status_p(pp) := vivo
+            END
+        END;
+        status_j := relatorio_noite
+    END;
 
 
 resp, mm <-- relatar_noite =
-	BEGIN
-		VAR cc IN
-			cc := status_p(p1);
-			resp := nao;
-			IF cc = atacado THEN
-				mm := p1;
-				status_p(p1) := morto;
-				resp := sim
-			END;
-			cc := status_p(p2);
-			IF cc = atacado THEN
-				mm := p2;
-				status_p(p2) := morto;
-				resp := sim
-			END;
-			cc := status_p(p3);
-			IF cc = atacado THEN
-				mm := p3;
-				status_p(p3) := morto;
-				resp := sim
-			END;
-			cc := status_p(p4);
-			IF cc = atacado THEN
-				mm := p4;
-				status_p(p4) := morto;
-				resp := sim
-			END;
-			cc := status_p(p5);
-			IF cc = atacado THEN
-				mm := p5;
-				status_p(p5) := morto;
-				resp := sim
-			END;
-			cc := status_p(p6);
-			IF cc = atacado THEN
-				mm := p6;
-				status_p(p6) := morto;
-				resp := sim
-			END;
-			cc := status_p(p7);
-			IF cc = atacado THEN
-				mm := p7;
-				status_p(p7) := morto;
-				resp := sim
-			END;
-			cc := status_p(p8);
-			IF cc = atacado THEN
-				mm := p8;
-				status_p(p8) := morto;
-				resp := sim
-			END;
-			cc := status_p(p9);
-			IF cc = atacado THEN
-				mm := p9;
-				status_p(p9) := morto;
-				resp := sim
-			END;
-			cc := status_p(p10);
-			IF cc = atacado THEN
-				mm := p10;
-				status_p(p10) := morto;
-				resp := sim
-			END;
-			cc := status_p(detetive_p);
-			IF cc = vivo THEN
-				status_j := investigacao
-			ELSE
-				status_j := votacao
-			END
-		END
-	END;
+    BEGIN
+        VAR cc IN
+            cc := status_p(p1);
+            resp := nao;
+            IF cc = atacado THEN
+                mm := p1;
+                status_p(p1) := morto;
+                resp := sim
+            END;
+            cc := status_p(p2);
+            IF cc = atacado THEN
+                mm := p2;
+                status_p(p2) := morto;
+                resp := sim
+            END;
+            cc := status_p(p3);
+            IF cc = atacado THEN
+                mm := p3;
+                status_p(p3) := morto;
+                resp := sim
+            END;
+            cc := status_p(p4);
+            IF cc = atacado THEN
+                mm := p4;
+                status_p(p4) := morto;
+                resp := sim
+            END;
+            cc := status_p(p5);
+            IF cc = atacado THEN
+                mm := p5;
+                status_p(p5) := morto;
+                resp := sim
+            END;
+            cc := status_p(p6);
+            IF cc = atacado THEN
+                mm := p6;
+                status_p(p6) := morto;
+                resp := sim
+            END;
+            cc := status_p(p7);
+            IF cc = atacado THEN
+                mm := p7;
+                status_p(p7) := morto;
+                resp := sim
+            END;
+            cc := status_p(p8);
+            IF cc = atacado THEN
+                mm := p8;
+                status_p(p8) := morto;
+                resp := sim
+            END;
+            cc := status_p(p9);
+            IF cc = atacado THEN
+                mm := p9;
+                status_p(p9) := morto;
+                resp := sim
+            END;
+            cc := status_p(p10);
+            IF cc = atacado THEN
+                mm := p10;
+                status_p(p10) := morto;
+                resp := sim
+            END;
+            cc := status_p(detetive_p);
+            IF cc = vivo THEN
+                status_j := investigacao
+            ELSE
+                status_j := votacao
+            END
+        END
+    END;
 
 
 resp <-- investigar(pp) =
-	BEGIN
-		VAR cc IN
-			cc := papel(pp);
-			IF cc = comum THEN
-				resp := sim
-			ELSE
-				resp := nao
-			END
-		END;
-		status_j := votacao
-	END;
+    BEGIN
+        VAR cc IN
+            cc := papel(pp);
+            IF cc = comum THEN
+                resp := sim
+            ELSE
+                resp := nao
+            END
+        END;
+        status_j := votacao
+    END;
 
 
 votar_nulo(pp) =
-	BEGIN
-		ja_votou(pp) := TRUE;
-		qtd_votos_i := qtd_votos_i + 1;
-		IF qtd_votos_i = qtd_vivos_i THEN
-			status_j := apuracao_votos
-		END
-	END;
+    BEGIN
+        ja_votou(pp) := TRUE;
+        qtd_votos_i := qtd_votos_i + 1;
+        IF qtd_votos_i = qtd_vivos_i THEN
+            status_j := apuracao_votos
+        END
+    END;
 
 
 votar(pp , qq) =
-	BEGIN
-		ja_votou(pp) := TRUE;
-		votos_recebidos_i(qq) := votos_recebidos_i(qq) + 1;
-		qtd_votos_i := qtd_votos_i + 1;
-		IF qtd_votos_i = 0 THEN
-			participante_mais_votado := qq		
-		ELSE
-			VAR cc, dd IN
-				cc := votos_recebidos_i(qq);
-				dd := votos_recebidos_i(participante_mais_votado);
-				IF cc > dd THEN 
-					participante_mais_votado := qq
-				END
-			END
-		END;
-		
-		IF qtd_votos_i = qtd_vivos_i
-		THEN
-			status_j := apuracao_votos
-		END
-	END;
+    BEGIN
+        ja_votou(pp) := TRUE;
+        votos_recebidos_i(qq) := votos_recebidos_i(qq) + 1;
+        qtd_votos_i := qtd_votos_i + 1;
+        IF qtd_votos_i = 0 THEN
+            participante_mais_votado := qq      
+        ELSE
+            VAR cc, dd IN
+                cc := votos_recebidos_i(qq);
+                dd := votos_recebidos_i(participante_mais_votado);
+                IF cc > dd THEN 
+                    participante_mais_votado := qq
+                END
+            END
+        END;
+        
+        IF qtd_votos_i = qtd_vivos_i
+        THEN
+            status_j := apuracao_votos
+        END
+    END;
 
 
 resp <-- apurar_votos =
-	BEGIN
-		VAR cc, dd, ee IN
-			cc := votos_recebidos_i(participante_mais_votado);
-			dd := papel(participante_mais_votado);
-			ee := (qtd_vivos_i / 2) + 1;
-			IF cc >= ee THEN
-				qtd_vivos_i := qtd_vivos_i - 1;
-				status_p(participante_mais_votado) := morto;
-				IF dd = lobisomem THEN
-					resp := morreu_lobisomem;
-				status_j := reinicio
-				ELSE
-					IF qtd_vivos_i <= 3
-					THEN
-						status_j := reinicio;
-						resp := lobisomem_venceu	
-					ELSE
-						status_j := ataque;
-						resp := morreu_nao_lobisomem	
-					END
-				END
-			ELSE
-				IF qtd_vivos_i <= 3 THEN	
-					status_j := reinicio;
-					resp := lobisomem_venceu
-				ELSE	
-					status_j := ataque;
-					resp := ninguem_morreu
-				END
+    BEGIN
+        VAR cc, dd, ee IN
+            cc := votos_recebidos_i(participante_mais_votado);
+            dd := papel(participante_mais_votado);
+            ee := (qtd_vivos_i / 2) + 1;
+            IF cc >= ee THEN
+                qtd_vivos_i := qtd_vivos_i - 1;
+                status_p(participante_mais_votado) := morto;
+                IF dd = lobisomem THEN
+                    resp := morreu_lobisomem;
+                status_j := reinicio
+                ELSE
+                    IF qtd_vivos_i <= 3
+                    THEN
+                        status_j := reinicio;
+                        resp := lobisomem_venceu    
+                    ELSE
+                        status_j := ataque;
+                        resp := morreu_nao_lobisomem    
+                    END
+                END
+            ELSE
+                IF qtd_vivos_i <= 3 THEN    
+                    status_j := reinicio;
+                    resp := lobisomem_venceu
+                ELSE    
+                    status_j := ataque;
+                    resp := ninguem_morreu
+                END
 
-			END
-		END;
-		qtd_votos_i := 0;
-		ja_votou := Participantes * {FALSE};
-		votos_recebidos_i := Participantes * {0}
-	END;
+            END
+        END;
+        qtd_votos_i := 0;
+        ja_votou := Participantes * {FALSE};
+        votos_recebidos_i := Participantes * {0}
+    END;
 
 
 // setar configurações para reiniciar jogo
 reiniciar =
-	BEGIN		
-		status_j := aguardando;
-		papel := Participantes * {nenhum};
-		status_p := Participantes * {fora};
-		qtd_vivos_i := 0
-	END
+    BEGIN       
+        status_j := aguardando;
+        papel := Participantes * {nenhum};
+        status_p := Participantes * {fora};
+        qtd_vivos_i := 0
+    END
 
 END
