@@ -109,6 +109,7 @@ void cidadeDorme__atacar(cidadeDorme__Participantes pp, cidadeDorme__Status_part
     (*ss) = cidadeDorme__status_p[pp];
 }
 
+
 void cidadeDorme__curar(cidadeDorme__Participantes pp)
 {
     {

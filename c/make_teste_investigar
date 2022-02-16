@@ -1,0 +1,1 @@
+gcc teste_investigar.c cidadeDorme_i.c unity/src/unity.c -o teste -g -w
