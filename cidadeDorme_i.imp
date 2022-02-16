@@ -83,7 +83,7 @@ terminar_cadastro =
 //Definição dos papéis dos participantes
 distribuir_papeis =
     BEGIN
-        skip
+        status_j := ataque
     END;
 
 
@@ -124,61 +124,71 @@ resp, mm <-- relatar_noite =
             IF cc = atacado THEN
                 mm := p1;
                 status_p(p1) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p2);
             IF cc = atacado THEN
                 mm := p2;
                 status_p(p2) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p3);
             IF cc = atacado THEN
                 mm := p3;
                 status_p(p3) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p4);
             IF cc = atacado THEN
                 mm := p4;
                 status_p(p4) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p5);
             IF cc = atacado THEN
                 mm := p5;
                 status_p(p5) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p6);
             IF cc = atacado THEN
                 mm := p6;
                 status_p(p6) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p7);
             IF cc = atacado THEN
                 mm := p7;
                 status_p(p7) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p8);
             IF cc = atacado THEN
                 mm := p8;
                 status_p(p8) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p9);
             IF cc = atacado THEN
                 mm := p9;
                 status_p(p9) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(p10);
             IF cc = atacado THEN
                 mm := p10;
                 status_p(p10) := morto;
-                resp := sim
+                resp := sim;
+                qtd_vivos_i := qtd_vivos_i - 1
             END;
             cc := status_p(detetive_p);
             IF cc = vivo THEN

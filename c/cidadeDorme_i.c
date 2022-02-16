@@ -87,7 +87,7 @@ void cidadeDorme__terminar_cadastro(void)
 
 void cidadeDorme__distribuir_papeis(void)
 {
-    ;
+    cidadeDorme__status_j = cidadeDorme__ataque;
 }
 
 void cidadeDorme__atacar(cidadeDorme__Participantes pp, cidadeDorme__Status_participante *ss)
@@ -135,6 +135,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p1;
             cidadeDorme__status_p[cidadeDorme__p1] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p2];
         if(cc == cidadeDorme__atacado)
@@ -142,6 +143,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p2;
             cidadeDorme__status_p[cidadeDorme__p2] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p3];
         if(cc == cidadeDorme__atacado)
@@ -149,6 +151,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p3;
             cidadeDorme__status_p[cidadeDorme__p3] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p4];
         if(cc == cidadeDorme__atacado)
@@ -156,6 +159,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p4;
             cidadeDorme__status_p[cidadeDorme__p4] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p5];
         if(cc == cidadeDorme__atacado)
@@ -163,6 +167,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p5;
             cidadeDorme__status_p[cidadeDorme__p5] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p6];
         if(cc == cidadeDorme__atacado)
@@ -170,6 +175,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p6;
             cidadeDorme__status_p[cidadeDorme__p6] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p7];
         if(cc == cidadeDorme__atacado)
@@ -177,6 +183,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p7;
             cidadeDorme__status_p[cidadeDorme__p7] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p8];
         if(cc == cidadeDorme__atacado)
@@ -184,6 +191,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p8;
             cidadeDorme__status_p[cidadeDorme__p8] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p9];
         if(cc == cidadeDorme__atacado)
@@ -191,6 +199,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p9;
             cidadeDorme__status_p[cidadeDorme__p9] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__p10];
         if(cc == cidadeDorme__atacado)
@@ -198,6 +207,7 @@ void cidadeDorme__relatar_noite(cidadeDorme__Relatorio *resp, cidadeDorme__Parti
             (*mm) = cidadeDorme__p10;
             cidadeDorme__status_p[cidadeDorme__p10] = cidadeDorme__morto;
             (*resp) = cidadeDorme__sim;
+            cidadeDorme__qtd_vivos_i = cidadeDorme__qtd_vivos_i-1;
         }
         cc = cidadeDorme__status_p[cidadeDorme__detetive_p];
         if(cc == cidadeDorme__vivo)
@@ -345,4 +355,3 @@ void cidadeDorme__reiniciar(void)
         cidadeDorme__qtd_vivos_i = 0;
     }
 }
-
